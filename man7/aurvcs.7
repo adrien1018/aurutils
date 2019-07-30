@@ -1,45 +1,69 @@
-.TH AUR\-VERCMP\-DEVEL 1 2018-12-04 AURUTILS
+.TH AURVCS 7 2019-07-30 AURUTILS
 .SH NAME
-aur\-vercmp\-devel \- retrieve latest revision for VCS packages
+aurvcs \- manage development packages
 
 .SH DESCRIPTION
-.BR aur\-vercmp\-devel (1)
-takes the contents of a local repository
-.RB ( "aur\-repo --list" )
-and matches them against a common pattern for VCS packages
-.RB ( "grep -E $AURVCS" ).
-It then looks in the
+Suggestions on how to manage development packages.
+
+
+.SH EXAMPLE
+.SS aur-vercmp-devel
+
+Takes the results of
+.B aur\-repo\~\-\-list\~\-\-devel
+plus any
+.BR aur-repo (1)
+arguments specified in the command line,
+and looks in the
 .BR aur\-sync (1)
 cache
 .RB ( "find $AURDEST" )
-for relevant directories.
+for matching directories.
 
 Any existing
 .BR PKGBUILD (5)
 files in these directories are executed, with upstream sources updated
 to their latest revision.
-.RB ( aur\-srcver
+.RB ( aur\-srcver (1)
 using
-.BR "makepkg -o" ).
+.BR "makepkg\~-o" ).
 
-Any option arguments are forwarded to
-.BR aur\-repo (1).
+.RS
+.EX
+#!/bin/bash
+readonly XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 
-.SH NOTES
-In the last line, the resulting package versions
-.RB ( "vcs_info" )
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+if cd "${AURDEST:-$XDG_CACHE_HOME/aurutils/sync}"; then
+    aur repo --list --devel "$@" \\
+        | tee "$tmp"/db \\
+        | cut -f1 \\
+        | xargs -r aur srcver >"$tmp"/new || exit
+
+    if [[ -s $tmp/new ]]; then
+       aur vercmp -p "$tmp"/new < "$tmp"/db
+    fi
+fi
+.EE
+.RE
+
+Then, the resulting package versions
+.RI ( "$tmp/new" )
 are compared against the local repository
-.RB ( "db_info" ).
+.RI ( "$tmp/db" ).
 If the package version is newer, it is printed to stdout. This may be
 combined with
 .BR aur\-sync (1)
 as follows:
+
+.RS
 .EX
-
-  $ mapfile -t packages < <(aur vercmp-devel | cut -d: -f1)
-  $ aur sync "${packages[@]}" --no-ver-shallow
-
+$ mapfile -t packages < <(aur vercmp-devel | cut -d: -f1)
+$ aur sync "${packages[@]}" --no-ver-shallow
 .EE
+.RE
 
 Version-control packages typically have
 .B pkgver
@@ -56,7 +80,8 @@ such as
 .I --upgrades
 to update regular and VCS packages in one go.
 
-.SS Populating the cache
+.TP 2
+.B Note on populating the cache:
 As described, the above relies on already available
 .BR PKGBUILD (5)
 files. If the
@@ -70,16 +95,13 @@ may be incomplete.
 The following mediates this by downloading all VCS packages in a local
 repository anew, with all build files and their diffs offered for
 inspection.
+
+.RS 7
 .EX
-
-  $ mapfile -t packages < <(aur repo --list | cut -f1 | grep -E "$AURVCS")
-  $ aur sync "${packages[@]}" --no-ver --print
-
+$ mapfile -t packages < <(aur repo --list --devel | cut -f1)
+$ aur sync "${packages[@]}" --no-ver --print
 .EE
-
-\" The last pipeline will also show any non-VCS dependencies.  Since
-\" the respective PKGBUILDs are not run by aur-srcver, they are not of
-\" relevance. Use aur-fetch manually?
+.RE
 
 .SH AUTHORS
 .MT https://github.com/AladW
