@@ -299,7 +299,7 @@ if (( download )); then
 fi
 
 # link build files in the queue (absolute links)
-parallel -X ln -s "$(pwd -P)"/{} "$tmp_view" :::: "$tmp"/queue
+xargs -a "$tmp/queue" realpath -z | xargs -0 ln -st "$tmp_view"
 
 # Explicitly define if exit success is to be trusted (#561)
 trust_exit_success=0
