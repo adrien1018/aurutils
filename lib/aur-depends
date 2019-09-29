@@ -96,9 +96,10 @@ while true; do
         -b|--pkgbase)     mode=pkgbase ;;
         -n|--pkgname)     mode=pkgname ;;
         -t|--table)       mode=table ;;
-        --dump-options) printf -- '--%s\n' "${opt_long[@]}" ;
-                        printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
-                        exit ;;
+        --dump-options)
+            printf -- '--%s\n' "${opt_long[@]}" ;
+            printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
+            exit ;;
         --) shift; break ;;
     esac
     shift

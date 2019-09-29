@@ -53,9 +53,10 @@ while true; do
         -t|--type) shift; type=$1 ;;
         --rpc-ver) shift; rpc_ver=$1 ;;
         --rpc-url) shift; rpc_url=$1 ;;
-        --dump-options) printf -- '--%s\n' "${opt_long[@]}" ;
-                        printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
-                        exit ;;
+        --dump-options)
+            printf -- '--%s\n' "${opt_long[@]}" ;
+            printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
+            exit ;;
         --) shift; break ;;
     esac
     shift

@@ -42,9 +42,10 @@ while true; do
         -a|--all|--sync) sync_repo=1 ;;
         -d|--database)   shift; argv_repo+=("$1") ;;
         --sysroot)       shift; sift_args+=("--sysroot=$1") ;;
-        --dump-options)  printf -- '--%s\n' "${opt_long[@]}" ;;
-                         printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
-                         exit ;;
+        --dump-options)
+            printf -- '--%s\n' "${opt_long[@]}" ;
+            printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
+            exit ;;
         --) shift; break;;
     esac
     shift

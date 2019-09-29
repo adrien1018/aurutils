@@ -46,9 +46,10 @@ while true; do
         -v|--verbose)   verbose=1 ;;
         --force)        fetch_args+=('--force') ;;
         --confirm-seen) confirm_seen=1 ;;
-        --dump-options) printf -- '--%s\n' "${opt_long[@]}" ;
-                        printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
-                        exit ;;
+        --dump-options)
+            printf -- '--%s\n' "${opt_long[@]}" ;
+            printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
+            exit ;;
         --) shift; break ;;
     esac
     shift

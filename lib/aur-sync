@@ -147,9 +147,10 @@ while true; do
         --pkgver)             build_args+=(--pkgver) ;;
         --rebuild)            build_args+=(-f); chkver_depth=1 ;;
         --rebuild?(-)tree)    build_args+=(-f); chkver_depth=0 ;;
-        --dump-options)       printf -- '--%s\n' "${opt_long[@]}" ;
-                              printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
-                              exit ;;
+        --dump-options)
+            printf -- '--%s\n' "${opt_long[@]}" ;
+            printf -- '%s' "${opt_short}" | sed 's/.:\?/-&\n/g' ;
+            exit ;;
         --) shift; break ;;
     esac
     shift
