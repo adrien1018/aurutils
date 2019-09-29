@@ -2,18 +2,6 @@
 .SH NAME
 aur\-chroot \- build packages with systemd-nspawn
 
-.SH SYNOPSIS
-.SY "aur chroot"
-.OP \-d database
-.OP \-D directory
-.OP \-M makepkg_conf
-.OP \-C pacman_conf
-.OP \-\-no\-build
-.OP \-\-no\-prepare
-.OP \-\-
-.RI [ "makechrootpkg args" ]
-.YS
-
 .SH DESCRIPTION
 Build packages in an nspawn container, adding the results to a local
 repository.
@@ -38,54 +26,6 @@ parameter is specified to
 .BR makechrootpkg ,
 the user container has a random name and is removed on build
 completion.
-
-.TP
-.BI \-C " FILE" "\fR,\fP \-\-pacman\-conf=" FILE
-The
-.BR pacman.conf (5)
-file used inside the container. Defaults to
-.BR /usr/share/devtools/pacman\-multilib.conf .
-This file is processed with
-.BR pacman\-conf
-to include necessary information from the host, such as mirrors.
-
-Due to devtools limitations, it should include at least one
-.B CacheDir
-entry (commented or not). If a local repository name is specified with
-.BR \-d ,
-its configuration is appended to this file.
-
-.TP
-.BI \-\-host\-conf= FILE
-The
-.BR pacman.conf (5)
-file used on the host to retrieve local repository
-information. Defaults to
-.IR /etc/pacman.conf .
-
-Due to devtools limitations, the values of
-.B CacheDir
-in the container configuration are always set to those of
-.B /etc/pacman.conf
-regardless of this setting.
-
-.TP
-.BI \-M " FILE" "\fR,\fP \-\-makepkg\-conf=" FILE
-The
-.BR makepkg.conf (5)
-file used inside the container. Defaults to
-.IR /usr/share/devtools/makepkg\-<machine>.conf .
-
-.TP
-.B \-\-no\-build
-Update or create the
-.B /root
-copy of the container; do not build a package.
-
-.TP
-.B \-\-no\-prepare
-Build a package, do not update the container.
-
 .TP
 .B \-d
 The local repository used inside the container. The first
@@ -179,11 +119,6 @@ directories on the host:
   # aur chroot -- -d /home/_ccache:/build/.ccache -cu
 
 .EE
-Necessary
-.BR makepkg (1)
-options may be set in a specified (\-M)
-.BR makepkg.conf (5)
-file. See GitHub issue #334 for details.
 
 .SS Building for a different architecture
 To build packages for a different architecture, prepend
